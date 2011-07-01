@@ -43,8 +43,10 @@ public class GetIP extends Activity implements OnClickListener {
 			}
 			*/
             try {
+            	int i = Integer.valueOf(etNum.getText().toString());
+				Log.d("debug","try to get proccess" + i);
 				 proc = Runtime.getRuntime().exec(
-				     "cat /proc/18603/net/tcp");
+				     "cat /proc/"+i+"/net/tcp");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
