@@ -46,7 +46,7 @@ public class GetIP extends Activity implements OnClickListener {
             	int i = Integer.valueOf(etNum.getText().toString());
 				Log.d("debug","try to get proccess" + i);
 				 proc = Runtime.getRuntime().exec(
-				     "cat /proc/"+i+"/net/tcp");
+				     "cat /proc/"+i+"/net/tcp6");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -60,7 +60,7 @@ public class GetIP extends Activity implements OnClickListener {
 					outStr = br.readLine();
             	  if (outStr != null && outStr.length() != 0)
             		  {
-            		  	Log.d("debug",outStr);
+            		  	Log.d("debug","line:"+outStr);
             		  }
             	  else
             	  {
