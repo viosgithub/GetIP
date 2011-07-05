@@ -9,12 +9,13 @@ import java.util.StringTokenizer;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
-import android.widget.MultiAutoCompleteTextView.Tokenizer;
 
 public class GetIP extends Activity implements OnClickListener {
     /** Called when the activity is first created. */
@@ -28,7 +29,6 @@ public class GetIP extends Activity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         findViewById(R.id.button1).setOnClickListener(this);
-        etNum = (EditText)findViewById(R.id.editText1);
     }
     @Override
     public void onStart()
@@ -63,6 +63,7 @@ public class GetIP extends Activity implements OnClickListener {
     private void getNetInfo()
     {
     	
+    	PackageManager pm = this.getPackageManager();
     	ConnectionData connectionData = new ConnectionData();
     	
     	Log.d("debug","start:getNetInfo()");
@@ -98,16 +99,24 @@ public class GetIP extends Activity implements OnClickListener {
             		  	int stkCoutner = 0;
             		  	while(stk.hasMoreTokens())
             		  	{
-            		  		if(stkCoutner == 1) connectionData.localIP = Integer.parseInt(stk.nextToken(),16);
+            		  		//if(stkCoutner == 1) connectionData.localIP = Integer.parseInt(stk.nextToken().substring(24),16);
+            		  		if(stkCoutner == 1) connectionData.localIP = hexStr2UnsignedInt(stk.nextToken().substring(24));
             		  		else if(stkCoutner == 2) connectionData.localPort = Integer.parseInt(stk.nextToken(),16);
-            		  		else if(stkCoutner == 3) connectionData.remoteIP = Integer.parseInt(stk.nextToken(),16);
+            		  		//else if(stkCoutner == 3) connectionData.remoteIP = Integer.parseInt(stk.nextToken().substring(24),16);
+            		  		else if(stkCoutner == 3) connectionData.remoteIP = hexStr2UnsignedInt(stk.nextToken().substring(24));
             		  		else if(stkCoutner == 4) connectionData.remotePort = Integer.parseInt(stk.nextToken(),16);
             		  		else if(stkCoutner == 5) connectionData.state = Integer.parseInt(stk.nextToken(),16);
-            		  		//UID が16進数か10進数かよくわからない
-            		  		else if(stkCoutner == 11) connectionData.uid = Integer.parseInt(stk.nextToken(),16);
+            		  		else if(stkCoutner == 11) connectionData.uid = Integer.parseInt(stk.nextToken(),10);
             		  		else stk.nextToken();
             		  		stkCoutner++;
             		  	}
+            		  	/*
+            		  	for(ApplicationInfo info:installedAppList)
+            		  	{
+            		  		if(connectionData.uid == info.uid) Log.d("debug","uid=" + info.uid + " packagename:" + info.packageName);
+            		  	}
+            		  	*/
+            		  	Log.d("debug","uid=" + connectionData.uid + " packagename:" + pm.getNameForUid(connectionData.uid));
             		  	connectionData.debugInfo();
             		  }
             	  else
@@ -122,6 +131,17 @@ public class GetIP extends Activity implements OnClickListener {
             	  e.printStackTrace(); 
                }
 			}
+    }
+    public int hexStr2UnsignedInt(String num)
+    {
+    	int ret = 0;
+    	for(int i=0;i<num.length();i++)
+    	{
+    		ret *= 16;
+    		ret += Character.digit(num.charAt(i),16);
+    	}
+    	
+    	return ret;
     }
 	@Override
 	public void onClick(View arg0) {

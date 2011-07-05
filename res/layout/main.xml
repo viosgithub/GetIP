@@ -4,7 +4,5 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
-    <TextView android:text="プロセス番号" android:id="@+id/textView1" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
-    <EditText android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/editText1" android:text="8070" android:inputType="number"></EditText>
-    <Button android:text="TCP情報取得" android:id="@+id/button1" android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
+    <Button android:layout_width="fill_parent" android:id="@+id/button1" android:text="Start" android:layout_height="wrap_content" android:layout_marginTop="50dp"></Button>
 </LinearLayout>
