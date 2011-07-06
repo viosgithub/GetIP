@@ -9,7 +9,6 @@ import java.util.StringTokenizer;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -60,20 +59,17 @@ public class GetIP extends Activity implements OnClickListener {
     	}
     	return ret;
     }
-    private void getNetInfo()
+    private void getTCP6Info()
     {
-    	
     	PackageManager pm = this.getPackageManager();
     	ConnectionData connectionData = new ConnectionData();
+    	connectionData.setConnectionType(ConnectionData.TCP6);
     	
-    	Log.d("debug","start:getNetInfo()");
+    	Log.d("debug","start:getTCP6Info()");
             try {
-            	//int i = Integer.valueOf(etNum.getText().toString());
-				//Log.d("debug","try to get proccess" + i);
 				 proc = Runtime.getRuntime().exec(
 				     "cat /proc/"+myPid+"/net/tcp6");
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			if(proc != null)
@@ -99,10 +95,8 @@ public class GetIP extends Activity implements OnClickListener {
             		  	int stkCoutner = 0;
             		  	while(stk.hasMoreTokens())
             		  	{
-            		  		//if(stkCoutner == 1) connectionData.localIP = Integer.parseInt(stk.nextToken().substring(24),16);
             		  		if(stkCoutner == 1) connectionData.localIP = hexStr2UnsignedInt(stk.nextToken().substring(24));
             		  		else if(stkCoutner == 2) connectionData.localPort = Integer.parseInt(stk.nextToken(),16);
-            		  		//else if(stkCoutner == 3) connectionData.remoteIP = Integer.parseInt(stk.nextToken().substring(24),16);
             		  		else if(stkCoutner == 3) connectionData.remoteIP = hexStr2UnsignedInt(stk.nextToken().substring(24));
             		  		else if(stkCoutner == 4) connectionData.remotePort = Integer.parseInt(stk.nextToken(),16);
             		  		else if(stkCoutner == 5) connectionData.state = Integer.parseInt(stk.nextToken(),16);
@@ -110,13 +104,195 @@ public class GetIP extends Activity implements OnClickListener {
             		  		else stk.nextToken();
             		  		stkCoutner++;
             		  	}
-            		  	/*
-            		  	for(ApplicationInfo info:installedAppList)
+            		  	String packageName = pm.getNameForUid(connectionData.uid);
+            		  	Log.d("debug","uid=" + connectionData.uid + " packagename:" + packageName);
+            		  	connectionData.debugInfo();
+            		  }
+            	  else
+            	  {
+            		  break;
+            	  }
+            	  counter ++;
+               }
+               }
+               catch(IOException e)
+               {
+            	  e.printStackTrace(); 
+               }
+			}
+    }
+    public void getTCPInfo()
+
+    {
+    	PackageManager pm = this.getPackageManager();
+    	ConnectionData connectionData = new ConnectionData();
+    	connectionData.setConnectionType(ConnectionData.TCP);
+    	
+    	Log.d("debug","start:getTCPInfo()");
+            try {
+				 proc = Runtime.getRuntime().exec(
+				     "cat /proc/"+myPid+"/net/tcp");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			if(proc != null)
+			{
+				Log.d("debug","proc is succsessfylly worked");
+               br = new BufferedReader(new InputStreamReader(proc.getInputStream()), 4056);
+               try{
+            	   int counter = 0;
+               while(true)
+               {
+					outStr = br.readLine();
+            	  if (outStr != null && outStr.length() != 0)
+            		  {
+            		  	if(counter == 0)
+            		  		{
+            		  			counter++;
+            		  			continue;
+            		  		}
+            		  	
+            		  	Log.d("debug",outStr);
+            		  	StringTokenizer stk = new StringTokenizer(outStr, ": ");
+            		  	Log.d("debug","try to tokenize");
+            		  	int stkCoutner = 0;
+            		  	while(stk.hasMoreTokens())
             		  	{
-            		  		if(connectionData.uid == info.uid) Log.d("debug","uid=" + info.uid + " packagename:" + info.packageName);
+            		  		if(stkCoutner == 1) connectionData.localIP = hexStr2UnsignedInt(stk.nextToken());
+            		  		else if(stkCoutner == 2) connectionData.localPort = Integer.parseInt(stk.nextToken(),16);
+            		  		else if(stkCoutner == 3) connectionData.remoteIP = hexStr2UnsignedInt(stk.nextToken());
+            		  		else if(stkCoutner == 4) connectionData.remotePort = Integer.parseInt(stk.nextToken(),16);
+            		  		else if(stkCoutner == 5) connectionData.state = Integer.parseInt(stk.nextToken(),16);
+            		  		else if(stkCoutner == 11) connectionData.uid = Integer.parseInt(stk.nextToken(),10);
+            		  		else stk.nextToken();
+            		  		stkCoutner++;
             		  	}
-            		  	*/
-            		  	Log.d("debug","uid=" + connectionData.uid + " packagename:" + pm.getNameForUid(connectionData.uid));
+            		  	String packageName = pm.getNameForUid(connectionData.uid);
+            		  	Log.d("debug","uid=" + connectionData.uid + " packagename:" + packageName);
+            		  	connectionData.debugInfo();
+            		  }
+            	  else
+            	  {
+            		  break;
+            	  }
+            	  counter ++;
+               }
+               }
+               catch(IOException e)
+               {
+            	  e.printStackTrace(); 
+               }
+			}
+    }
+    public void getUDPInfo()
+    {
+    	PackageManager pm = this.getPackageManager();
+    	ConnectionData connectionData = new ConnectionData();
+    	connectionData.setConnectionType(ConnectionData.UDP);
+    	
+    	Log.d("debug","start:getUDPInfo()");
+            try {
+				 proc = Runtime.getRuntime().exec(
+				     "cat /proc/"+myPid+"/net/udp");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			if(proc != null)
+			{
+				Log.d("debug","proc is succsessfylly worked");
+               br = new BufferedReader(new InputStreamReader(proc.getInputStream()), 4056);
+               try{
+            	   int counter = 0;
+               while(true)
+               {
+					outStr = br.readLine();
+            	  if (outStr != null && outStr.length() != 0)
+            		  {
+            		  	if(counter == 0)
+            		  		{
+            		  			counter++;
+            		  			continue;
+            		  		}
+            		  	
+            		  	Log.d("debug",outStr);
+            		  	StringTokenizer stk = new StringTokenizer(outStr, ": ");
+            		  	Log.d("debug","try to tokenize");
+            		  	int stkCoutner = 0;
+            		  	while(stk.hasMoreTokens())
+            		  	{
+            		  		if(stkCoutner == 1) connectionData.localIP = hexStr2UnsignedInt(stk.nextToken());
+            		  		else if(stkCoutner == 2) connectionData.localPort = Integer.parseInt(stk.nextToken(),16);
+            		  		else if(stkCoutner == 3) connectionData.remoteIP = hexStr2UnsignedInt(stk.nextToken());
+            		  		else if(stkCoutner == 4) connectionData.remotePort = Integer.parseInt(stk.nextToken(),16);
+            		  		else if(stkCoutner == 5) connectionData.state = Integer.parseInt(stk.nextToken(),16);
+            		  		else if(stkCoutner == 11) connectionData.uid = Integer.parseInt(stk.nextToken(),10);
+            		  		else stk.nextToken();
+            		  		stkCoutner++;
+            		  	}
+            		  	String packageName = pm.getNameForUid(connectionData.uid);
+            		  	Log.d("debug","uid=" + connectionData.uid + " packagename:" + packageName);
+            		  	connectionData.debugInfo();
+            		  }
+            	  else
+            	  {
+            		  break;
+            	  }
+            	  counter ++;
+               }
+               }
+               catch(IOException e)
+               {
+            	  e.printStackTrace(); 
+               }
+			}
+    }
+    void getUDP6Info()
+    {
+    	PackageManager pm = this.getPackageManager();
+    	ConnectionData connectionData = new ConnectionData();
+    	connectionData.setConnectionType(ConnectionData.UDP6);
+    	
+    	Log.d("debug","start:getUDP6Info()");
+            try {
+				 proc = Runtime.getRuntime().exec(
+				     "cat /proc/"+myPid+"/net/udp6");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			if(proc != null)
+			{
+				Log.d("debug","proc is succsessfylly worked");
+               br = new BufferedReader(new InputStreamReader(proc.getInputStream()), 4056);
+               try{
+            	   int counter = 0;
+               while(true)
+               {
+					outStr = br.readLine();
+            	  if (outStr != null && outStr.length() != 0)
+            		  {
+            		  	if(counter == 0)
+            		  		{
+            		  			counter++;
+            		  			continue;
+            		  		}
+            		  	
+            		  	Log.d("debug",outStr);
+            		  	StringTokenizer stk = new StringTokenizer(outStr, ": ");
+            		  	Log.d("debug","try to tokenize");
+            		  	int stkCoutner = 0;
+            		  	while(stk.hasMoreTokens())
+            		  	{
+            		  		if(stkCoutner == 1) connectionData.localIP = hexStr2UnsignedInt(stk.nextToken().substring(24));
+            		  		else if(stkCoutner == 2) connectionData.localPort = Integer.parseInt(stk.nextToken(),16);
+            		  		else if(stkCoutner == 3) connectionData.remoteIP = hexStr2UnsignedInt(stk.nextToken().substring(24));
+            		  		else if(stkCoutner == 4) connectionData.remotePort = Integer.parseInt(stk.nextToken(),16);
+            		  		else if(stkCoutner == 5) connectionData.state = Integer.parseInt(stk.nextToken(),16);
+            		  		else if(stkCoutner == 11) connectionData.uid = Integer.parseInt(stk.nextToken(),10);
+            		  		else stk.nextToken();
+            		  		stkCoutner++;
+            		  	}
+            		  	String packageName = pm.getNameForUid(connectionData.uid);
+            		  	Log.d("debug","uid=" + connectionData.uid + " packagename:" + packageName);
             		  	connectionData.debugInfo();
             		  }
             	  else
@@ -145,6 +321,9 @@ public class GetIP extends Activity implements OnClickListener {
     }
 	@Override
 	public void onClick(View arg0) {
-		getNetInfo();
+		getUDP6Info();
+		getTCP6Info();
+		getUDPInfo();
+		getTCPInfo();
 	}
 }

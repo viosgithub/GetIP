@@ -10,11 +10,16 @@ public class ConnectionData {
 	public static final int TCP6 = 1;
 	public static final int UDP = 2;
 	public static final int UDP6 = 3;
+	public static final String[] CONNECTION_TYPE = {"TCP","TCP6","UDP","UDP6"};
 	public int connectionType,localIP,localPort,remoteIP,remotePort,state,uid;
 	
 	public ConnectionData() {
 		// TODO Auto-generated constructor stub
 		connectionType = localIP = localPort = remoteIP = remotePort = state = uid = -1;
+	}
+	public void setConnectionType(int type)
+	{
+		connectionType = type;
 	}
 	
 	
@@ -33,6 +38,7 @@ public class ConnectionData {
 	{
 		Log.d("debug","start:debugInfo()");
 		Log.d("debug","UID:"+uid);
+		Log.d("debug","ConnectionType:"+CONNECTION_TYPE[connectionType]);
 		Log.d("debug","stat:"+getState());
 		Log.d("debug","LocalIP:"+Formatter.formatIpAddress(localIP)+":"+localPort);
 		Log.d("debug","remoteIP:"+Formatter.formatIpAddress(remoteIP)+":"+remotePort);
