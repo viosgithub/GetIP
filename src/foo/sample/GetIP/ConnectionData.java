@@ -1,6 +1,7 @@
 package foo.sample.GetIP;
 
-import android.content.pm.PackageManager;
+import java.util.List;
+
 import android.text.format.Formatter;
 import android.util.Log;
 
@@ -43,6 +44,15 @@ public class ConnectionData {
 		Log.d("debug","stat:"+getState());
 		Log.d("debug","LocalIP:"+Formatter.formatIpAddress(localIP)+":"+localPort);
 		Log.d("debug","remoteIP:"+Formatter.formatIpAddress(remoteIP)+":"+remotePort);
+	}
+	public void debugInfo(List<String> output)
+	{
+		output.add("start:debugInfo()");
+		output.add("UID:"+uid);
+		output.add("ConnectionType:"+CONNECTION_TYPE[connectionType]);
+		output.add("stat:"+getState());
+		output.add("LocalIP:"+Formatter.formatIpAddress(localIP)+":"+localPort);
+		output.add("remoteIP:"+Formatter.formatIpAddress(remoteIP)+":"+remotePort);
 	}
 
 }

@@ -3,6 +3,7 @@ package foo.sample.GetIP;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -13,10 +14,14 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 
 public class GetIP extends Activity{
     /** Called when the activity is first created. */
+	ListView lv;
 	Process proc = null;
 	EditText etNum = null;
 	BufferedReader br = null;
@@ -31,6 +36,7 @@ public class GetIP extends Activity{
     public void onStart()
     {
     	super.onStart();
+    	List<String> outputList = new ArrayList<String>();
     	myPid = getMyPid();
     	if(myPid == -1)
     	{
@@ -40,7 +46,11 @@ public class GetIP extends Activity{
     	{
     		Log.d("debug","Succsess to get myPid:" + myPid);
     	}
-    	showNetInfo();
+    	showNetInfo(outputList);
+    	Log.d("debug","prepaering ListAdapter and ListView,the outputList:" + outputList);
+    	ListAdapter la = (ListAdapter) new  ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_expandable_list_item_1,outputList);
+    	lv = (ListView)findViewById(R.id.listview);
+    	lv.setAdapter(la);
     }
     private int getMyPid()
     {
@@ -58,7 +68,7 @@ public class GetIP extends Activity{
     	}
     	return ret;
     }
-    private void getTCP6Info()
+    private void getTCP6Info(List<String> output)
     {
     	PackageManager pm = this.getPackageManager();
     	ConnectionData connectionData = new ConnectionData();
@@ -105,12 +115,15 @@ public class GetIP extends Activity{
             		  	}
             		  	String packageName = pm.getNameForUid(connectionData.uid);
             		  	Log.d("debug","uid=" + connectionData.uid + " packagename:" + packageName);
+            		  	output.add("uid=" + connectionData.uid + " packagename:" + packageName);
             		  	try {
 							Log.d("debug","App\' s path:"+pm.getApplicationInfo(packageName, 0).publicSourceDir);
+							output.add("App\' s path:"+pm.getApplicationInfo(packageName, 0).publicSourceDir);
 						} catch (NameNotFoundException e) {
 							e.printStackTrace();
 						}
-            		  	connectionData.debugInfo();
+            		  	//connectionData.debugInfo();
+            		  	connectionData.debugInfo(output);
             		  }
             	  else
             	  {
@@ -125,7 +138,7 @@ public class GetIP extends Activity{
                }
 			}
     }
-    public void getTCPInfo()
+    public void getTCPInfo(List<String> output)
 
     {
     	PackageManager pm = this.getPackageManager();
@@ -173,12 +186,15 @@ public class GetIP extends Activity{
             		  	}
             		  	String packageName = pm.getNameForUid(connectionData.uid);
             		  	Log.d("debug","uid=" + connectionData.uid + " packagename:" + packageName);
+            		  	output.add("uid=" + connectionData.uid + " packagename:" + packageName);
             		  	try {
 							Log.d("debug","App\' s path:"+pm.getApplicationInfo(packageName, 0).publicSourceDir);
+							output.add("App\' s path:"+pm.getApplicationInfo(packageName, 0).publicSourceDir);
 						} catch (NameNotFoundException e) {
 							e.printStackTrace();
 						}
-            		  	connectionData.debugInfo();
+            		  	//connectionData.debugInfo()
+            		  	connectionData.debugInfo(output);
             		  }
             	  else
             	  {
@@ -193,7 +209,7 @@ public class GetIP extends Activity{
                }
 			}
     }
-    public void getUDPInfo()
+    public void getUDPInfo(List<String> output)
     {
     	PackageManager pm = this.getPackageManager();
     	ConnectionData connectionData = new ConnectionData();
@@ -239,12 +255,15 @@ public class GetIP extends Activity{
             		  	}
             		  	String packageName = pm.getNameForUid(connectionData.uid);
             		  	Log.d("debug","uid=" + connectionData.uid + " packagename:" + packageName);
+            		  	output.add("uid=" + connectionData.uid + " packagename:" + packageName);
             		  	try {
 							Log.d("debug","App\' s path:"+pm.getApplicationInfo(packageName, 0).publicSourceDir);
+							output.add("App\' s path:"+pm.getApplicationInfo(packageName, 0).publicSourceDir);
 						} catch (NameNotFoundException e) {
 							e.printStackTrace();
 						}
-            		  	connectionData.debugInfo();
+            		  	//connectionData.debugInfo();
+            		  	connectionData.debugInfo(output);
             		  }
             	  else
             	  {
@@ -259,7 +278,7 @@ public class GetIP extends Activity{
                }
 			}
     }
-    void getUDP6Info()
+    void getUDP6Info(List<String> output)
     {
     	PackageManager pm = this.getPackageManager();
     	ConnectionData connectionData = new ConnectionData();
@@ -306,12 +325,15 @@ public class GetIP extends Activity{
             		  	}
             		  	String packageName = pm.getNameForUid(connectionData.uid);
             		  	Log.d("debug","uid=" + connectionData.uid + " packagename:" + packageName);
+            		  	output.add("uid=" + connectionData.uid + " packagename:" + packageName);
             		  	try {
-							Log.d("debug","App\' s path:"+pm.getApplicationInfo(packageName, 0).publicSourceDir);
+							Log.d("debug","App's path:"+pm.getApplicationInfo(packageName, 0).publicSourceDir);
+							output.add("App's path:"+pm.getApplicationInfo(packageName, 0).publicSourceDir);
 						} catch (NameNotFoundException e) {
 							e.printStackTrace();
 						}
-            		  	connectionData.debugInfo();
+            		  	//connectionData.debugInfo();
+            		  	connectionData.debugInfo(output);
             		  }
             	  else
             	  {
@@ -334,13 +356,12 @@ public class GetIP extends Activity{
     		ret *= 16;
     		ret += Character.digit(num.charAt(i),16);
     	}
-    	
     	return ret;
     }
-	public void showNetInfo() {
-		getUDP6Info();
-		getTCP6Info();
-		getUDPInfo();
-		getTCPInfo();
+	public void showNetInfo(List<String> output) {
+		getUDP6Info(output);
+		getUDP6Info(output);
+		getUDP6Info(output);
+		getTCPInfo(output);
 	}
 }
