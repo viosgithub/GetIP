@@ -10,13 +10,12 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.EditText;
 
-public class GetIP extends Activity implements OnClickListener {
+public class GetIP extends Activity{
     /** Called when the activity is first created. */
 	Process proc = null;
 	EditText etNum = null;
@@ -27,7 +26,6 @@ public class GetIP extends Activity implements OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        findViewById(R.id.button1).setOnClickListener(this);
     }
     @Override
     public void onStart()
@@ -42,6 +40,7 @@ public class GetIP extends Activity implements OnClickListener {
     	{
     		Log.d("debug","Succsess to get myPid:" + myPid);
     	}
+    	showNetInfo();
     }
     private int getMyPid()
     {
@@ -106,6 +105,11 @@ public class GetIP extends Activity implements OnClickListener {
             		  	}
             		  	String packageName = pm.getNameForUid(connectionData.uid);
             		  	Log.d("debug","uid=" + connectionData.uid + " packagename:" + packageName);
+            		  	try {
+							Log.d("debug","App\' s path:"+pm.getApplicationInfo(packageName, 0).publicSourceDir);
+						} catch (NameNotFoundException e) {
+							e.printStackTrace();
+						}
             		  	connectionData.debugInfo();
             		  }
             	  else
@@ -169,6 +173,11 @@ public class GetIP extends Activity implements OnClickListener {
             		  	}
             		  	String packageName = pm.getNameForUid(connectionData.uid);
             		  	Log.d("debug","uid=" + connectionData.uid + " packagename:" + packageName);
+            		  	try {
+							Log.d("debug","App\' s path:"+pm.getApplicationInfo(packageName, 0).publicSourceDir);
+						} catch (NameNotFoundException e) {
+							e.printStackTrace();
+						}
             		  	connectionData.debugInfo();
             		  }
             	  else
@@ -189,7 +198,6 @@ public class GetIP extends Activity implements OnClickListener {
     	PackageManager pm = this.getPackageManager();
     	ConnectionData connectionData = new ConnectionData();
     	connectionData.setConnectionType(ConnectionData.UDP);
-    	
     	Log.d("debug","start:getUDPInfo()");
             try {
 				 proc = Runtime.getRuntime().exec(
@@ -231,6 +239,11 @@ public class GetIP extends Activity implements OnClickListener {
             		  	}
             		  	String packageName = pm.getNameForUid(connectionData.uid);
             		  	Log.d("debug","uid=" + connectionData.uid + " packagename:" + packageName);
+            		  	try {
+							Log.d("debug","App\' s path:"+pm.getApplicationInfo(packageName, 0).publicSourceDir);
+						} catch (NameNotFoundException e) {
+							e.printStackTrace();
+						}
             		  	connectionData.debugInfo();
             		  }
             	  else
@@ -293,6 +306,11 @@ public class GetIP extends Activity implements OnClickListener {
             		  	}
             		  	String packageName = pm.getNameForUid(connectionData.uid);
             		  	Log.d("debug","uid=" + connectionData.uid + " packagename:" + packageName);
+            		  	try {
+							Log.d("debug","App\' s path:"+pm.getApplicationInfo(packageName, 0).publicSourceDir);
+						} catch (NameNotFoundException e) {
+							e.printStackTrace();
+						}
             		  	connectionData.debugInfo();
             		  }
             	  else
@@ -319,8 +337,7 @@ public class GetIP extends Activity implements OnClickListener {
     	
     	return ret;
     }
-	@Override
-	public void onClick(View arg0) {
+	public void showNetInfo() {
 		getUDP6Info();
 		getTCP6Info();
 		getUDPInfo();

@@ -1,5 +1,6 @@
 package foo.sample.GetIP;
 
+import android.content.pm.PackageManager;
 import android.text.format.Formatter;
 import android.util.Log;
 

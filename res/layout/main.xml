@@ -4,5 +4,4 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
-    <Button android:layout_width="fill_parent" android:id="@+id/button1" android:text="Start" android:layout_height="wrap_content" android:layout_marginTop="50dp"></Button>
 </LinearLayout>
