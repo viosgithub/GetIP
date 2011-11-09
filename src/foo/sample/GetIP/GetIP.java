@@ -155,19 +155,24 @@ public class GetIP extends Activity{
 			if(proc != null)
 			{
 				Log.d("debug","proc is succsessfylly worked");
-               br = new BufferedReader(new InputStreamReader(proc.getInputStream()), 4056);
+               br = new BufferedReader(new InputStreamReader(proc.getInputStream()), 40056);
                try{
-            	   int counter = 0;
+            	   int counter = -1;
                while(true)
                {
+            	   Log.d("debug","Loog Counter = " + String.valueOf(counter));
 					outStr = br.readLine();
-            	  if (outStr != null && outStr.length() != 0)
+            	  if (outStr != null)
             		  {
+            		  			counter++;
             		  	if(counter == 0)
             		  		{
-            		  			counter++;
             		  			continue;
             		  		}
+            		  	if(outStr.length() == 0)
+            		  	{
+            		  		continue;
+            		  	}
             		  	
             		  	Log.d("debug",outStr);
             		  	StringTokenizer stk = new StringTokenizer(outStr, ": ");
@@ -191,6 +196,7 @@ public class GetIP extends Activity{
 							Log.d("debug","App\' s path:"+pm.getApplicationInfo(packageName, 0).publicSourceDir);
 							output.add("App\' s path:"+pm.getApplicationInfo(packageName, 0).publicSourceDir);
 						} catch (NameNotFoundException e) {
+							Log.d("debug","Exception:NameNotFound");
 							e.printStackTrace();
 						}
             		  	//connectionData.debugInfo()
@@ -359,9 +365,9 @@ public class GetIP extends Activity{
     	return ret;
     }
 	public void showNetInfo(List<String> output) {
+		getTCP6Info(output);
 		getUDP6Info(output);
-		getUDP6Info(output);
-		getUDP6Info(output);
+		getUDPInfo(output);
 		getTCPInfo(output);
 	}
 }
